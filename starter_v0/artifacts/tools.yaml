@@ -37,20 +37,38 @@ tools:
       required: [service]
 
   - name: inspect_device
-    description: "Kiểm tra thông tin và chẩn đoán thiết bị."
+    description: >-
+      Đọc bản ghi tồn kho và ảnh chụp chẩn đoán của MỘT thiết bị theo mã tài sản.
+      Dùng khi cần biết tình trạng kỹ thuật của chính thiết bị đó. Không dùng tool này
+      chỉ để biết một nhân viên đang được cấp những thiết bị nào; đó là dữ liệu của
+      directory record.
     parameters:
       type: object
       properties:
-        asset_id: {type: string, description: "Mã tài sản"}
-        check: {type: string, enum: [all, network, vpn, security, hardware, software], default: "all", description: "Nhóm kiểm tra"}
-      required: [asset_id]
+        asset_id: {type: string, description: "Mã tài sản của thiết bị. Chỉ nhận mã tài sản; mã nhân viên không phải là giá trị hợp lệ cho tham số này."}
+        check:
+          type: string
+          enum: [all, network, vpn, security, hardware, software]
+          description: >-
+            Nhóm chẩn đoán cần đọc. Luôn truyền tường minh. Chọn đúng nhóm ứng với
+            triệu chứng người dùng nêu, kể cả khi yêu cầu đó còn kèm nhiều việc khác
+            hoặc cần gọi thêm tool; phạm vi của tham số này chỉ phụ thuộc triệu chứng
+            trên thiết bị, không phụ thuộc số lượng tool trong lượt.
+            Chỉ dùng "all" khi người dùng yêu cầu kiểm tra tổng thể hoặc không nêu
+            triệu chứng cụ thể nào.
+      required: [asset_id, check]
 
   - name: lookup_user
-    description: "Tra cứu người dùng trong danh bạ hỗ trợ."
+    description: >-
+      Đọc directory record của một nhân viên theo mã nhân viên. Bản ghi trả về đã bao gồm
+      phòng ban, trạng thái tài khoản, trạng thái MFA và DANH SÁCH THIẾT BỊ ĐƯỢC CẤP,
+      nên một lời gọi là đủ để trả lời câu hỏi về tài khoản và về thiết bị đang cấp cho
+      người đó. Chỉ gọi thêm tool thiết bị khi người dùng cần chẩn đoán kỹ thuật của một
+      máy cụ thể và đã có mã tài sản.
     parameters:
       type: object
       properties:
-        employee_id: {type: string, description: "Mã nhân viên"}
+        employee_id: {type: string, description: "Mã nhân viên. Chỉ nhận mã nhân viên; mã tài sản không phải là giá trị hợp lệ cho tham số này."}
       required: [employee_id]
 
   - name: format_incident_report
