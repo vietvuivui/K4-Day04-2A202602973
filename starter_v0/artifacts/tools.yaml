@@ -8,7 +8,7 @@
 tools:
   # ---------------- Core tools ----------------
   - name: clarify
-    description: "Gửi một câu hỏi cho người dùng."
+    description: "Hỏi người dùng khi thiếu thông tin bắt buộc, lựa chọn còn mơ hồ, hoặc cần xác nhận trước một thao tác có tác động. Không gọi tool chuyên biệt khi chưa có dữ liệu đầu vào cần thiết."
     parameters:
       type: object
       properties:
@@ -18,17 +18,17 @@ tools:
       required: [question]
 
   - name: search_kb
-    description: "Tìm hướng dẫn hỗ trợ kỹ thuật."
+    description: "Tìm bài viết knowledge base nội bộ về cách dùng, cấu hình hoặc khắc phục sự cố theo chủ đề. Dùng khi cần hướng dẫn có thể tái sử dụng; không dùng để lấy trạng thái live của service, inventory/chẩn đoán một asset, hay thông tin employee. Chọn category sát nhất với vấn đề và truyền query mô tả nhu cầu. Có thể gọi cùng tool khác chỉ khi yêu cầu đồng thời cần hướng dẫn và một loại dữ liệu riêng."
     parameters:
       type: object
       properties:
         query: {type: string, default: "", description: "Nội dung cần tìm"}
-        category: {type: string, enum: [all, vpn, email, wifi, printing, account, security, hardware, software, meeting_room], default: "all", description: "Nhóm hướng dẫn"}
+        category: {type: string, enum: [all, vpn, email, wifi, printing, account, security, hardware, software, meeting_room], default: "all", description: "Nhóm nội dung knowledge base"}
         top_k: {type: integer, default: 3, description: "Số kết quả"}
       required: [query]
 
   - name: check_service_status
-    description: "Kiểm tra trạng thái một dịch vụ."
+    description: "Kiểm tra trạng thái hiện tại của một shared service: availability, incident hoặc maintenance trong production/staging. Dùng cho sự cố hoặc tình trạng ảnh hưởng ở cấp service chung; không dùng cho chẩn đoán một asset, hướng dẫn knowledge base, hay thông tin employee. Mặc định environment là production khi không được nêu; hỏi lại nếu môi trường được nêu nhưng không xác định rõ."
     parameters:
       type: object
       properties:
@@ -37,7 +37,7 @@ tools:
       required: [service]
 
   - name: inspect_device
-    description: "Kiểm tra thông tin và chẩn đoán thiết bị."
+    description: "Đọc inventory và diagnostic snapshot của một asset nội bộ được chỉ rõ bằng asset_id. Dùng khi cần kiểm tra network, VPN, security, hardware, software hoặc toàn bộ thiết bị đó; không dùng cho shared-service status, bài hướng dẫn, hay chỉ để biết asset được cấp cho employee. Không suy ra asset_id mới từ kết quả tool khác để inspect nếu người dùng chưa yêu cầu diagnostics hoặc inventory."
     parameters:
       type: object
       properties:
@@ -46,7 +46,7 @@ tools:
       required: [asset_id]
 
   - name: lookup_user
-    description: "Tra cứu người dùng trong danh bạ hỗ trợ."
+    description: "Tra cứu directory record của một employee bằng employee_id chính xác. Trả về metadata hỗ trợ và danh sách assigned_assets; dùng khi cần tài khoản hoặc thiết bị được cấp cho employee. Không dùng cho live service status, knowledge base, hay inventory/chẩn đoán của một asset."
     parameters:
       type: object
       properties:
@@ -96,7 +96,7 @@ tools:
       required: [query]
 
   - name: create_ticket
-    description: "Tạo một ticket hỗ trợ."
+    description: "Tạo ticket hỗ trợ sau khi người dùng xác nhận rõ ràng ticket hiện tại. Không tạo ticket chỉ vì người dùng mô tả sự cố hoặc từng xác nhận một yêu cầu đã bị sửa/cancel; khi đó phải dùng clarify để xin xác nhận mới."
     parameters:
       type: object
       properties:
