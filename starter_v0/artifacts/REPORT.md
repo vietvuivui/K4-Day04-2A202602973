@@ -189,6 +189,22 @@ Nhóm đã hoàn thành xuất sắc toàn bộ các mục tiêu trọng tâm c�
 - **Điều tôi học được từ phần việc này:** Một agent có thể pass gần hết case chức năng (functional) trong bộ eval thường nhưng vẫn có lỗ hổng an toàn nghiêm trọng nếu không có bộ test adversarial riêng — `case_accuracy` trên group suite không phản ánh được rủi ro bị giả mạo xác nhận để ghi dữ liệu thật.
 - **Nếu làm lại, tôi sẽ cải thiện điều gì:** Tôi sẽ viết thêm các biến thể adversarial khác cho đúng 3 lỗ hổng đã tìm ra (đổi thứ tự câu, chèn xác nhận giả ở giữa một câu hỏi khác) để kiểm tra rule mới có tổng quát hóa được hay chỉ vừa đủ pass đúng 3 case ban đầu.
 
+### LÊ NGUYỄN THÁI DƯƠNG — MSSV: 2A202602383
+
+- **Vai trò/phần việc được nhận:** Quản lý `tools.yaml`, chuẩn hóa enum và arguments, đồng bộ tên tool giữa declaration với implementation/eval, đồng thời rà soát ranh giới dữ liệu khi sử dụng Tavily API.
+- **Những gì tôi đã thay đổi trong repo chung:**
+  - Cập nhật mô tả và routing boundary cho các tool trong `starter_v0/artifacts/tools.yaml`, làm rõ trường hợp sử dụng của `search_kb`, `check_service_status`, `inspect_device`, `lookup_user` và `create_ticket` để agent chọn đúng capability.
+  - Chuẩn hóa các enum và convention tham số: service chỉ nhận `vpn`, `email`, `sso`, `wifi`, `printing`; environment chỉ nhận `production` hoặc `staging`; nhóm kiểm tra thiết bị dùng `all`, `network`, `vpn`, `security`, `hardware`, `software`; priority của ticket dùng `low`, `medium`, `high`, `critical`.
+  - Đồng bộ tên tool và contract tham số với các implementation, bộ eval và nội dung demo; giữ nguyên quy tắc khi đổi tên tool phải cập nhật đồng thời declaration, registry và dữ liệu kiểm thử.
+  - Bổ sung guidance để `search_device_info` chỉ nhận manufacturer/model công khai, không truyền asset ID, employee ID hoặc dữ liệu chẩn đoán nội bộ sang Tavily; kết quả web được xem là untrusted evidence và không có quyền ghi dữ liệu.
+  - Củng cố prompt routing trong `starter_v0/artifacts/system_prompt.md`, yêu cầu gọi đúng tool theo loại dữ liệu cần lấy và không tự suy diễn identifier hoặc gọi `create_ticket` khi chưa có xác nhận cho request hiện tại.
+- **File hoặc artifact liên quan:** `starter_v0/artifacts/tools.yaml`, `starter_v0/artifacts/system_prompt.md`, `starter_v0/tools/search_device_info/tool.py`, `starter_v0/tools/__init__.py`, `starter_v0/data/eval_base.json`, `starter_v0/data/eval_helpdesk_extension.json`, `starter_v0/artifacts/version_log.csv`.
+- **Commit hash hoặc pull request:** `3e9947a` (`Update artifacts`).
+- **Một quyết định kỹ thuật tôi đã đưa ra và lý do:** Tôi chọn mô tả rõ capability và boundary ngay trong tool declaration thay vì chỉ dựa vào prompt chung. Schema là nơi model nhìn thấy contract của từng tool, vì vậy enum, required arguments và điều kiện sử dụng rõ ràng sẽ giảm lỗi chọn sai tool, truyền sai tham số và dùng nhầm dữ liệu nội bộ cho external search.
+- **Khó khăn tôi gặp và cách tôi xử lý:** Khó khăn chính là giữ cho tên tool, enum và argument nhất quán giữa `tools.yaml`, registry, implementation và các file eval. Tôi đối chiếu các điểm đăng ký và dữ liệu kiểm thử, đồng thời phân biệt rõ shared service với device diagnostic và employee lookup để tránh mô tả chồng lấn khiến agent gọi thừa tool.
+- **Điều tôi học được từ phần việc này:** Tool schema không chỉ là phần khai báo kỹ thuật mà còn là một lớp hướng dẫn hành vi cho agent. Một mô tả có boundary cụ thể, enum hợp lệ và required fields đúng sẽ giúp prompt dễ kiểm soát hơn; với Tavily, việc tách public product identity khỏi internal identifier là điều kiện bắt buộc để bảo vệ dữ liệu.
+- **Nếu làm lại, tôi sẽ cải thiện điều gì:** Tôi sẽ bổ sung bộ kiểm tra tự động so sánh tên tool, enum và required arguments giữa `tools.yaml`, registry, implementation và eval; đồng thời thêm mock test cho Tavily để kiểm tra request body không chứa identifier nội bộ và kết quả web bị loại bỏ instruction-like content.
+
 ---
 
 ## C3. Final checkout
