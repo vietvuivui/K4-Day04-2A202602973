@@ -173,7 +173,7 @@ Nhóm đã hoàn thành xuất sắc toàn bộ các mục tiêu trọng tâm c�
 - **Điều tôi học được từ phần việc này:** Hiểu rõ rằng ranh giới an toàn của Agent không thể chỉ dựa vào lời dặn trong Prompt (prompt injection có thể qua mặt), mà bắt buộc phải có tầng guardrail bằng code (regex, allowlist domains, validation checks) bảo vệ trước khi gọi API bên thứ ba.
 - **Nếu làm lại, tôi sẽ cải thiện điều gì:** Tôi sẽ bổ sung thêm tính năng gợi ý phiên bản phần mềm thay thế an toàn tự động (ví dụ: khi người dùng hỏi AnyDesk thì tự động trích xuất link chính thức của Quick Assist từ catalog trả về).
 
-### TẠ DUY LÂM — MSSV: [điền MSSV]
+### TẠ DUY LÂM — MSSV: 2A202602699
 
 - **Vai trò/phần việc được nhận:** Thiết kế bộ 10 test case eval nhóm (`eval_group.json`) và rà soát, gia cố ranh giới xác nhận (confirmation boundary) của agent trước các kịch bản adversarial giả mạo xác nhận.
 - **Những gì tôi đã thay đổi trong repo chung:**
@@ -196,7 +196,7 @@ Nhóm đã hoàn thành xuất sắc toàn bộ các mục tiêu trọng tâm c�
 - [x] `TEAMMATES.md` có đủ họ tên, MSSV, GitHub username và vai trò.
 - [x] Mỗi thành viên có ít nhất một commit trong lịch sử branch nộp bài.
 - [x] Phần reflection chung của nhóm đã hoàn thành và có evidence.
-- [ ] Mỗi thành viên đã tự viết và commit self-reflection của mình.
+- [x] Mỗi thành viên đã tự viết và commit self-reflection của mình.
 - [x] `system_prompt.md`, `tools.yaml`, version log, runs, eval, transcript, UI và report đã có trong repository.
 - [x] Không có `.env`, API key, token, dữ liệu thật, cache hoặc generated ticket.
 - [x] Nhóm trưởng và mọi thành viên đã thống nhất đúng một URL repository chung.
