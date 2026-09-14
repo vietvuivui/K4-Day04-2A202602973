@@ -18,10 +18,10 @@
 
 ## A2. Tool agent có
 
-| Tool | Chức năng | Core / optional / team-built |
-|---|---|---|
-| clarify | Hỏi bổ sung hoặc xác nhận | core |
-|  |  |  |
+| Tool    | Chức năng                 | Core / optional / team-built |
+| ------- | ------------------------- | ---------------------------- |
+| clarify | Hỏi bổ sung hoặc xác nhận | core                         |
+|         |                           |                              |
 
 ## A3. Câu hỏi mẫu
 
@@ -32,8 +32,8 @@
 ## A4. Kịch bản demo đã rehearse
 
 | Scenario | Tool trace cần thấy | Cải thiện version | Fallback run/transcript |
-|---|---|---|---|
-|  |  |  |  |
+| -------- | ------------------- | ----------------- | ----------------------- |
+|          |                     |                   |                         |
 
 # PHẦN B — Chi tiết và evidence
 
@@ -43,31 +43,31 @@ total_cases`, và tool result error đã được review thủ công.
 ## B1. Version evidence
 
 | Version | Prompt/tool change | Hypothesis | Metric | Before | After | Run file |
-|---|---|---|---|---:|---:|---|
-| v0 | baseline |  |  |  |  |  |
-| v1 |  |  |  |  |  |  |
-| v2 |  |  |  |  |  |  |
-| v3 |  |  |  |  |  |  |
+| ------- | ------------------ | ---------- | ------ | -----: | ----: | -------- |
+| v0      | baseline           |            |        |        |       |          |
+| v1      |                    |            |        |        |       |          |
+| v2      |                    |            |        |        |       |          |
+| v3      |                    |            |        |        |       |          |
 
 ## B2. Failure analysis
 
 | Case ID | Failure type | Actual calls | What failed | Fix |
-|---|---|---|---|---|
-|  |  |  |  |  |
+| ------- | ------------ | ------------ | ----------- | --- |
+|         |              |              |             |     |
 
 ## B3. Team eval cases
 
 Liệt kê đúng 10 case tự viết: 5 single-turn và 5 multi-turn.
 
 | Case ID | What it tests | Expected behavior | Result |
-|---|---|---|---|
-|  |  |  |  |
+| ------- | ------------- | ----------------- | ------ |
+|         |               |                   |        |
 
 ## B4. Live chat evidence
 
 | Scenario/turn | Version | Tool calls + args | Transcript/run | Outcome |
-|---|---|---|---|---|
-|  |  |  |  |  |
+| ------------- | ------- | ----------------- | -------------- | ------- |
+|               |         |                   |                |         |
 
 ## B4a. Adversarial evidence
 
@@ -75,8 +75,8 @@ Phân tích ít nhất 3 cases. Automatic score không chứng minh rằng khôn
 liệu bị ghi hoặc gửi ra ngoài; cần kiểm tra cả `tool_results` và filesystem.
 
 | Attack case | Expected boundary | Actual calls | Sensitive write/exfiltration occurred? | Outcome |
-|---|---|---|---|---|
-|  |  |  |  |  |
+| ----------- | ----------------- | ------------ | -------------------------------------- | ------- |
+|             |                   |              |                                        |         |
 
 ## B5. Optional và bonus tool evidence
 
@@ -85,11 +85,11 @@ Không làm phần này không ảnh hưởng việc hoàn thành core lab. `pol
 `create_ticket` và `search_device_info` là tool có sẵn, không phải tool mới do
 nhóm tự xây.
 
-| Category | Evidence file | What worked | Risk / guardrail |
-|---|---|---|---|
-| Optional built-in |  |  |  |
-| External search + privacy boundary |  |  |  |
-| Bonus: tool mới do nhóm tự xây |  |  |  |
+| Category                           | Evidence file | What worked | Risk / guardrail |
+| ---------------------------------- | ------------- | ----------- | ---------------- |
+| Optional built-in                  |               |             |                  |
+| External search + privacy boundary |               |             |                  |
+| Bonus: tool mới do nhóm tự xây     |               |             |                  |
 
 ## B6. Safety review
 
