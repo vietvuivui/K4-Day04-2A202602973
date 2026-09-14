@@ -8,14 +8,14 @@
 tools:
   # ---------------- Core tools ----------------
   - name: clarify
-    description: "Gửi một câu hỏi cho người dùng."
+    description: "Gửi một câu hỏi cho người dùng khi thiếu mã định danh, khi giá trị nằm ngoài danh sách cho phép, hoặc khi cần xin xác nhận hành động."
     parameters:
       type: object
       properties:
         question: {type: string, default: "", description: "Câu hỏi"}
-        response_type: {type: string, enum: [text, yes_no, choice], default: "text", description: "Kiểu trả lời"}
-        options: {type: array, default: [], items: {type: string}, description: "Các lựa chọn"}
-      required: [question]
+        response_type: {type: string, enum: [text, yes_no, choice], description: "Kiểu trả lời: 'text' khi thiếu asset_id hoặc employee_id; 'yes_no' khi xin xác nhận trước khi tạo ticket; 'choice' khi người dùng nêu giá trị nằm ngoài enum."}
+        options: {type: array, default: [], items: {type: string}, description: "Các lựa chọn khi response_type là 'choice', ví dụ ['production', 'staging']"}
+      required: [question, response_type]
 
   - name: search_kb
     description: "Tìm hướng dẫn hỗ trợ kỹ thuật."
@@ -28,7 +28,7 @@ tools:
       required: [query]
 
   - name: check_service_status
-    description: "Kiểm tra trạng thái một dịch vụ."
+    description: "Kiểm tra trạng thái một dịch vụ dùng chung. CHỈ dùng cho môi trường production hoặc staging. Nếu người dùng nêu môi trường lạ (demo, lab), không gọi tool này mà gọi clarify choice."
     parameters:
       type: object
       properties:
@@ -39,9 +39,7 @@ tools:
   - name: inspect_device
     description: >-
       Đọc bản ghi tồn kho và ảnh chụp chẩn đoán của MỘT thiết bị theo mã tài sản.
-      Dùng khi cần biết tình trạng kỹ thuật của chính thiết bị đó. Không dùng tool này
-      chỉ để biết một nhân viên đang được cấp những thiết bị nào; đó là dữ liệu của
-      directory record.
+      Dùng khi cần biết tình trạng kỹ thuật của chính thiết bị đó.
     parameters:
       type: object
       properties:
@@ -50,12 +48,10 @@ tools:
           type: string
           enum: [all, network, vpn, security, hardware, software]
           description: >-
-            Nhóm chẩn đoán cần đọc. Luôn truyền tường minh. Chọn đúng nhóm ứng với
-            triệu chứng người dùng nêu, kể cả khi yêu cầu đó còn kèm nhiều việc khác
-            hoặc cần gọi thêm tool; phạm vi của tham số này chỉ phụ thuộc triệu chứng
-            trên thiết bị, không phụ thuộc số lượng tool trong lượt.
-            Chỉ dùng "all" khi người dùng yêu cầu kiểm tra tổng thể hoặc không nêu
-            triệu chứng cụ thể nào.
+            Nhóm chẩn đoán cần đọc. Luôn truyền tường minh.
+            Nếu người dùng nêu sự cố/triệu chứng VPN trên máy (kể cả nói 'kiểm tra máy đó', 'VPN certificate hết hạn'), PHẢI chọn 'vpn'.
+            Nếu nêu sự cố mạng/Wi-Fi, chọn 'network'. Nếu nêu phần cứng, chọn 'hardware'.
+            Chỉ dùng 'all' khi người dùng yêu cầu 'kiểm tra tổng thể' hoặc hoàn toàn không nêu triệu chứng cụ thể nào.
       required: [asset_id, check]
 
   - name: lookup_user
@@ -114,7 +110,7 @@ tools:
       required: [query]
 
   - name: create_ticket
-    description: "Tạo một ticket hỗ trợ."
+    description: "Tạo một ticket hỗ trợ. CHỈ được gọi khi người dùng đã xác nhận rõ ràng (confirmed=true). TUYỆT ĐỐI KHÔNG gọi tool này ở lượt đầu tiên khi người dùng mới yêu cầu; lượt đầu tiên bắt buộc phải gọi clarify với response_type='yes_no' để hỏi người dùng có đồng ý tạo hay không."
     parameters:
       type: object
       properties:
@@ -123,3 +119,22 @@ tools:
         asset_id: {type: string, default: "", description: "Mã tài sản nếu có"}
         confirmed: {type: boolean, default: false, description: "Đã được người dùng xác nhận"}
       required: [summary]
+
+  # ---------------- Team Bonus Tool ----------------
+  - name: approved_software_catalog
+    description: >-
+      Tra cứu danh mục phần mềm doanh nghiệp được phê duyệt, bị cấm hoặc cần xin quyền (ví dụ Docker, AnyDesk, VSCode, Slack, Wireshark).
+      Dùng khi người dùng hỏi có được phép cài đặt hoặc sử dụng một phần mềm hay không, điều kiện cấp license, hoặc phần mềm thay thế an toàn.
+    parameters:
+      type: object
+      properties:
+        software_name:
+          type: string
+          default: ""
+          description: "Tên phần mềm cần tra cứu, ví dụ 'Docker', 'AnyDesk', 'VSCode'."
+        category:
+          type: string
+          enum: [all, developer_tools, communication, remote_access, security_tools, browser]
+          default: "all"
+          description: "Phân loại phần mềm."
+      required: [software_name]

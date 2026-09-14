@@ -1,101 +1,242 @@
 {
   "dataset_id": "day04_v3_helpdesk_group",
   "dataset_role": "group",
-  "description": "Team-authored eval: exactly 10 original IT helpdesk cases (5 single-turn G01-G05, 5 multi-turn G06-G10).",
+  "description": "Team original IT helpdesk evaluation suite: 5 single-turn query cases and 5 multi-turn turns cases, featuring the bonus tool approved_software_catalog.",
   "allowed_failure_types": ["wrong_tool", "wrong_arg_value", "wrong_boundary", "unnecessary_tool", "out_of_scope", "missing_info"],
   "cases": [
     {
-      "id": "G01_missing_asset_clarify", "phase": "B", "suite": "group",
-      "query": "Máy tính xách tay của mình treo mạng liên tục, kiểm tra giúp network có ổn không?",
-      "failure_type": "missing_info",
-      "expect": {"tool_calls": [{"name": "clarify", "args": {"response_type": "text"}}]},
-      "metadata": {"skill": "clarify_asset_network", "difficulty": "easy", "what_it_tests": "Không có mã tài sản; mô tả 'máy tính xách tay của mình' không phải identifier hợp lệ nên phải hỏi lại, không tự suy đoán asset_id."}
-    },
-    {
-      "id": "G02_environment_enum_clarify", "phase": "B", "suite": "group",
-      "query": "Kiểm tra dịch vụ in ấn ở môi trường UAT có ổn không?",
-      "failure_type": "missing_info",
-      "expect": {"tool_calls": [{"name": "clarify", "args": {"response_type": "choice", "options": ["production", "staging"]}}]},
-      "metadata": {"skill": "clarify_environment_enum", "difficulty": "medium", "what_it_tests": "'UAT' không khớp enum [production, staging] của check_service_status; phải hỏi chọn thay vì tự ánh xạ sang giá trị gần nhất."}
-    },
-    {
-      "id": "G03_policy_not_status", "phase": "B", "suite": "group",
-      "query": "Theo quy định IT, khi người dùng không nói rõ môi trường thì hệ thống mặc định lấy production hay phải hỏi lại?",
+      "id": "G01_check_docker_approval",
+      "phase": "B",
+      "suite": "group",
+      "query": "Tôi có được phép cài Docker Desktop trên máy công ty để phát triển phần mềm không?",
       "failure_type": "wrong_tool",
-      "expect": {"tool_calls": [{"name": "policy", "args": {"policy_area": "service_operations"}}]},
-      "metadata": {"skill": "policy_vs_status_ambiguous", "difficulty": "hard", "what_it_tests": "Câu hỏi về quy định/rule áp dụng phải đi vào policy tool, không phải check_service_status, dù có nhắc tới 'môi trường' và 'production'."}
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "approved_software_catalog",
+            "args": {
+              "software_name": "Docker Desktop",
+              "category": "developer_tools"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "bonus_software_catalog",
+        "difficulty": "medium",
+        "what_it_tests": "Tra cứu trạng thái cấp phép phần mềm doanh nghiệp bằng bonus tool approved_software_catalog."
+      }
     },
     {
-      "id": "G04_status_not_policy", "phase": "B", "suite": "group",
-      "query": "Email production theo chính sách là phải hoạt động 24/7 — hiện tại nó có đang chạy ổn không?",
+      "id": "G02_meeting_room_device_check",
+      "phase": "B",
+      "suite": "group",
+      "query": "Kiểm tra toàn bộ thiết bị trình chiếu và âm thanh tại phòng họp RM-101.",
       "failure_type": "wrong_tool",
-      "expect": {"tool_calls": [{"name": "check_service_status", "args": {"service": "email", "environment": "production"}}]},
-      "metadata": {"skill": "status_vs_policy_ambiguous", "difficulty": "hard", "what_it_tests": "Câu có nhắc 'chính sách' nhưng ý định thật là hỏi trạng thái sống hiện tại; không được chuyển sang policy tool."}
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "inspect_device",
+            "args": {
+              "asset_id": "RM-101",
+              "check": "all"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "inspect_room_hardware",
+        "difficulty": "easy",
+        "what_it_tests": "Thiết bị phòng họp có mã RM-xxx được định tuyến chính xác vào inspect_device."
+      }
     },
     {
-      "id": "G05_out_of_scope_refuse", "phase": "B", "suite": "group",
-      "query": "Giúp mình lên thực đơn tiệc sinh nhật cho đồng nghiệp cuối tuần này nhé.",
+      "id": "G03_password_policy_lookup",
+      "phase": "B",
+      "suite": "group",
+      "query": "Cho tôi biết quy định về độ dài và chu kỳ đổi mật khẩu tài khoản nội bộ.",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "policy",
+            "args": {
+              "policy_area": "access_control"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "password_policy",
+        "difficulty": "easy",
+        "what_it_tests": "Định tuyến câu hỏi chính sách bảo mật mật khẩu vào policy access_control."
+      }
+    },
+    {
+      "id": "G04_lookup_employee_directory",
+      "phase": "B",
+      "suite": "group",
+      "query": "Tra cứu thông tin phòng ban và trạng thái tài khoản của nhân viên EMP-1005.",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup_user",
+            "args": {
+              "employee_id": "EMP-1005"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "lookup_employee",
+        "difficulty": "easy",
+        "what_it_tests": "Tra cứu mã nhân viên chính xác qua directory record."
+      }
+    },
+    {
+      "id": "G05_out_of_scope_entertainment",
+      "phase": "B",
+      "suite": "group",
+      "query": "Review giúp mình bộ phim bom tấn rạp tuần này có gì hay.",
       "failure_type": "out_of_scope",
-      "expect": {"no_tool": true, "behavior": "refuse"},
-      "metadata": {"skill": "out_of_scope_personal", "difficulty": "easy", "what_it_tests": "Yêu cầu cá nhân ngoài phạm vi IT helpdesk; không gọi tool nào, chỉ nói rõ phạm vi hỗ trợ."}
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse"
+      },
+      "metadata": {
+        "skill": "out_of_scope_filter",
+        "difficulty": "easy",
+        "what_it_tests": "Yêu cầu giải trí không liên quan IT Helpdesk bị từ chối không gọi tool."
+      }
     },
     {
-      "id": "G06_asset_id_after_clarify", "phase": "B", "suite": "group",
+      "id": "G06_prohibited_software_multiturn",
+      "phase": "B",
+      "suite": "group",
       "turns": [
-        {"role": "user", "content": "Máy in ở khu vực tầng 4 không in được, xem giúp mình với."},
-        {"role": "user", "content": "Mã máy là PR-404."},
-        {"role": "user", "content": "Chỉ cần kiểm tra tình trạng mạng của máy đó thôi."}
-      ],
-      "failure_type": "missing_info",
-      "expect": {"tool_calls": [{"name": "inspect_device", "args": {"asset_id": "PR-404", "check": "network"}}]},
-      "metadata": {"skill": "multiturn_fill_asset_printer", "difficulty": "medium", "what_it_tests": "Bổ sung mã máy ở lượt sau khi agent lẽ ra phải hỏi; dùng đúng asset_id vừa cung cấp và check theo yêu cầu mới nhất."}
-    },
-    {
-      "id": "G07_device_correction_turn2", "phase": "B", "suite": "group",
-      "turns": [
-        {"role": "user", "content": "Kiểm tra hardware trên máy DT-087."},
-        {"role": "user", "content": "À khoan, nhầm máy, ý mình là MB-012."},
-        {"role": "user", "content": "Vẫn giữ yêu cầu kiểm tra hardware nhé."}
+        {"role": "user", "content": "Tôi muốn cài phần mềm điều khiển từ xa AnyDesk."},
+        {"role": "user", "content": "Nếu AnyDesk không được thì TeamViewer có được phép dùng không?"},
+        {"role": "user", "content": "Kiểm tra cụ thể TeamViewer trong nhóm remote access giúp tôi."}
       ],
       "failure_type": "wrong_arg_value",
-      "expect": {"tool_calls": [{"name": "inspect_device", "args": {"asset_id": "MB-012", "check": "hardware"}}]},
-      "metadata": {"skill": "multiturn_device_correction", "difficulty": "hard", "what_it_tests": "Asset ID sửa ở lượt sau phải thắng asset ID ban đầu; check hardware giữ nguyên."}
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "approved_software_catalog",
+            "args": {
+              "software_name": "TeamViewer",
+              "category": "remote_access"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "multiturn_bonus_software",
+        "difficulty": "hard",
+        "what_it_tests": "Xử lý hội thoại nhiều lượt, cập nhật tên phần mềm mới nhất trong bonus tool."
+      }
     },
     {
-      "id": "G08_cancel_ticket_meeting_room", "phase": "B", "suite": "group",
+      "id": "G07_carry_environment_staging",
+      "phase": "B",
+      "suite": "group",
       "turns": [
-        {"role": "user", "content": "Tạo ticket lỗi micro phòng họp RM-501, mức priority medium."},
-        {"role": "user", "content": "Thôi, đừng tạo ticket nữa."},
-        {"role": "user", "content": "Bạn chỉ cần xác nhận là đã hiểu yêu cầu hủy."}
+        {"role": "user", "content": "Trạng thái dịch vụ SSO staging hiện tại thế nào?"},
+        {"role": "user", "content": "Còn hệ thống Wi-Fi thì sao?"},
+        {"role": "user", "content": "Vẫn kiểm tra trên môi trường staging nhé."}
+      ],
+      "failure_type": "wrong_arg_value",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "check_service_status",
+            "args": {
+              "service": "wifi",
+              "environment": "staging"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "multiturn_carry_env",
+        "difficulty": "hard",
+        "what_it_tests": "Giữ đúng môi trường staging khi đổi dịch vụ từ SSO sang wifi."
+      }
+    },
+    {
+      "id": "G08_correct_asset_network_check",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {"role": "user", "content": "Kiểm tra kết nối mạng của laptop LT-204."},
+        {"role": "user", "content": "Xin lỗi mình nhìn nhầm tem, máy cần kiểm tra là LT-318."},
+        {"role": "user", "content": "Vẫn kiểm tra riêng card mạng nhé."}
+      ],
+      "failure_type": "wrong_arg_value",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "inspect_device",
+            "args": {
+              "asset_id": "LT-318",
+              "check": "network"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "multiturn_correction_asset",
+        "difficulty": "hard",
+        "what_it_tests": "Cập nhật mã tài sản sau khi đính chính và giữ nguyên loại chẩn đoán network."
+      }
+    },
+    {
+      "id": "G09_confirm_ticket_creation",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {"role": "user", "content": "Tôi muốn tạo ticket báo lỗi hỏng ổ cứng máy LT-204, mức độ high."},
+        {"role": "user", "content": "Tôi xác nhận đồng ý tạo ticket hỗ trợ này với đúng thông tin trên."}
+      ],
+      "failure_type": "wrong_boundary",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "create_ticket",
+            "args": {
+              "summary": "Lỗi hỏng ổ cứng máy LT-204",
+              "priority": "high",
+              "asset_id": "LT-204",
+              "confirmed": true
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "multiturn_confirmed_ticket",
+        "difficulty": "hard",
+        "what_it_tests": "Chỉ tạo ticket với confirmed=true khi người dùng đã xác nhận rõ ràng ở lượt hội thoại tiếp theo."
+      }
+    },
+    {
+      "id": "G10_cancel_ticket_creation",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {"role": "user", "content": "Chuẩn bị tạo ticket giúp tôi: Outlook không gửi được thư trên LT-204."},
+        {"role": "user", "content": "Thôi mình tự sửa được rồi, hủy yêu cầu tạo ticket này đi."}
       ],
       "failure_type": "unnecessary_tool",
-      "expect": {"no_tool": true, "behavior": "answer_without_tool"},
-      "metadata": {"skill": "multiturn_cancel_ticket", "difficulty": "hard", "what_it_tests": "Yêu cầu hủy ở lượt sau phải thắng ticket request ban đầu; không gọi clarify và không create_ticket."}
-    },
-    {
-      "id": "G09_chained_inspect_then_report", "phase": "B", "suite": "group",
-      "turns": [
-        {"role": "user", "content": "Máy DT-087 liên tục báo lỗi memory."},
-        {"role": "user", "content": "Đúng rồi, mã tài sản là DT-087."},
-        {"role": "user", "content": "Kiểm tra hardware của máy này, sau đó trình bày kết quả thành báo cáo kỹ thuật tên 'DT-087 hardware alert'."}
-      ],
-      "failure_type": "wrong_tool",
-      "expect": {"tool_calls": [
-        {"name": "inspect_device", "args": {"asset_id": "DT-087", "check": "hardware"}},
-        {"name": "format_incident_report", "args": {"template": "technical", "incident_title": "DT-087 hardware alert"}}
-      ]},
-      "metadata": {"skill": "multiturn_chain_inspect_report", "difficulty": "hard", "what_it_tests": "Một yêu cầu xâu chuỗi hai tool trong cùng lượt trả lời: inspect trước để lấy evidence, rồi format report ngay sau đó."}
-    },
-    {
-      "id": "G10_employee_correction_turn2", "phase": "B", "suite": "group",
-      "turns": [
-        {"role": "user", "content": "Tra cứu tài khoản nhân viên EMP-1004."},
-        {"role": "user", "content": "Xin lỗi, gõ nhầm mã, đúng ra là EMP-1006."},
-        {"role": "user", "content": "Cho mình biết luôn thiết bị đang được cấp của người đó."}
-      ],
-      "failure_type": "wrong_arg_value",
-      "expect": {"tool_calls": [{"name": "lookup_user", "args": {"employee_id": "EMP-1006"}}]},
-      "metadata": {"skill": "multiturn_employee_correction_v2", "difficulty": "medium", "what_it_tests": "Mã nhân viên sửa ở lượt sau phải thắng mã ban đầu; một lần lookup_user đã đủ trả lời cả tài khoản và thiết bị được cấp."}
+      "expect": {
+        "no_tool": true,
+        "behavior": "acknowledge_cancellation"
+      },
+      "metadata": {
+        "skill": "multiturn_action_cancellation",
+        "difficulty": "medium",
+        "what_it_tests": "Người dùng hủy bỏ yêu cầu tạo ticket thì không được gọi create_ticket."
+      }
     }
   ]
 }

@@ -1,0 +1,119 @@
+{
+  "catalog_version": "2026.1",
+  "policy_reference": "POL-SEC-04-APPROVED-SOFTWARE",
+  "software": [
+    {
+      "name": "Visual Studio Code",
+      "aliases": ["vscode", "code"],
+      "category": "developer_tools",
+      "status": "approved",
+      "min_version": "1.90.0",
+      "license_type": "free",
+      "approval_required": false,
+      "install_method": "Company Portal / winget",
+      "notes": "Trình soạn thảo mã nguồn tiêu chuẩn được phê duyệt cho toàn bộ nhân viên kỹ thuật."
+    },
+    {
+      "name": "Docker Desktop",
+      "aliases": ["docker"],
+      "category": "developer_tools",
+      "status": "needs_approval",
+      "min_version": "4.30.0",
+      "license_type": "paid_subscription",
+      "approval_required": true,
+      "approver": "Engineering Lead & IT Operations",
+      "install_method": "IT Service Desk manual provision",
+      "notes": "Yêu cầu bản quyền doanh nghiệp có trả phí. Cần phê duyệt ngân sách phòng ban trước khi cấp license."
+    },
+    {
+      "name": "Slack",
+      "aliases": ["slack client"],
+      "category": "communication",
+      "status": "approved",
+      "min_version": "4.38.0",
+      "license_type": "enterprise",
+      "approval_required": false,
+      "install_method": "SSO auto-provision",
+      "notes": "Công cụ giao tiếp nội bộ chính thức của Northstar Labs."
+    },
+    {
+      "name": "Zoom",
+      "aliases": ["zoom meeting", "zoom workplace"],
+      "category": "communication",
+      "status": "approved",
+      "min_version": "6.0.0",
+      "license_type": "enterprise",
+      "approval_required": false,
+      "install_method": "Company Portal",
+      "notes": "Phần mềm hội nghị trực tuyến tiêu chuẩn. Phải đăng nhập bằng SSO của công ty."
+    },
+    {
+      "name": "AnyDesk",
+      "aliases": ["anydesk remote"],
+      "category": "remote_access",
+      "status": "prohibited",
+      "min_version": null,
+      "license_type": "unauthorized",
+      "approval_required": false,
+      "install_method": "blocked",
+      "notes": "BỊ CẤM theo Chính sách An toàn Thông tin Sec-04 do nguy cơ chiếm quyền điều khiển từ xa trái phép. Sử dụng Windows Quick Assist hoặc VPN thay thế."
+    },
+    {
+      "name": "TeamViewer",
+      "aliases": ["teamviewer remote"],
+      "category": "remote_access",
+      "status": "prohibited",
+      "min_version": null,
+      "license_type": "unauthorized",
+      "approval_required": false,
+      "install_method": "blocked",
+      "notes": "BỊ CẤM theo Chính sách An toàn Thông tin Sec-04. Cổng mạng bị chặn bởi Firewall công ty."
+    },
+    {
+      "name": "Wireshark",
+      "aliases": ["packet sniffer"],
+      "category": "security_tools",
+      "status": "needs_approval",
+      "min_version": "4.2.0",
+      "license_type": "open_source",
+      "approval_required": true,
+      "approver": "CISO / Security Team",
+      "install_method": "IT Security provisioning",
+      "notes": "Công cụ bắt gói tin mạng có rủi ro bảo mật cao. Chỉ cấp cho kỹ sư mạng hoặc chuyên gia bảo mật có phê duyệt của CISO."
+    },
+    {
+      "name": "Google Chrome",
+      "aliases": ["chrome"],
+      "category": "browser",
+      "status": "approved",
+      "min_version": "125.0.0",
+      "license_type": "free",
+      "approval_required": false,
+      "install_method": "Standard image",
+      "notes": "Trình duyệt web tiêu chuẩn được quản lý bởi chính sách MDM."
+    },
+    {
+      "name": "Postman",
+      "aliases": ["postman api"],
+      "category": "developer_tools",
+      "status": "approved",
+      "min_version": "11.0.0",
+      "license_type": "freemium",
+      "approval_required": false,
+      "install_method": "Company Portal",
+      "notes": "Được phép sử dụng gói cơ bản để test API. Không lưu secret production trong workspace công khai."
+    },
+    {
+      "name": "Telegram",
+      "aliases": ["telegram desktop"],
+      "category": "communication",
+      "status": "prohibited",
+      "min_version": null,
+      "license_type": "unauthorized",
+      "approval_required": false,
+      "install_method": "blocked",
+      "notes": "BỊ CẤM trên toàn bộ thiết bị do công ty quản lý để ngăn ngừa rò rỉ dữ liệu (Data Loss Prevention)."
+    }
+  ]
+}
+

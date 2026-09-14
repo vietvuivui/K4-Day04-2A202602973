@@ -23,6 +23,10 @@ QUERY_LABELS = {
     "compatibility": "hardware and operating system compatibility",
 }
 INTERNAL_IDENTIFIER = re.compile(r"\b(?:LT|DT|MB|PR|RM|EMP)-\d+\b", re.IGNORECASE)
+PRIVATE_IP_PATTERN = re.compile(r"\b(?:10\.\d{1,3}\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|172\.(?:1[6-9]|2\d|3[0-1])\.\d{1,3}\.\d{1,3})\b")
+INTERNAL_DOMAIN_PATTERN = re.compile(r"\b\S+\.northstar\.local\b", re.IGNORECASE)
+MAC_ADDRESS_PATTERN = re.compile(r"\b(?:[0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}\b")
+CREDENTIAL_PATTERN = re.compile(r"\b(?:password|passwd|token|api[ _-]?key|secret|mfa|otp)\b", re.IGNORECASE)
 
 
 def _domain(url: str) -> str:
@@ -62,11 +66,19 @@ def search_device_info(
         return {"tool": "search_device_info", "error": "missing_public_product_identity"}
     if len(manufacturer_value) > 80 or len(model_value) > 160:
         return {"tool": "search_device_info", "error": "public_product_identity_too_long"}
-    if INTERNAL_IDENTIFIER.search(f"{manufacturer_value} {model_value}"):
+    
+    combined_query = f"{manufacturer_value} {model_value}"
+    if (
+        INTERNAL_IDENTIFIER.search(combined_query)
+        or PRIVATE_IP_PATTERN.search(combined_query)
+        or INTERNAL_DOMAIN_PATTERN.search(combined_query)
+        or MAC_ADDRESS_PATTERN.search(combined_query)
+        or CREDENTIAL_PATTERN.search(combined_query)
+    ):
         return {
             "tool": "search_device_info",
             "error": "restricted_internal_identifier",
-            "message": "Remove asset and employee identifiers before external search.",
+            "message": "Remove asset, employee identifiers, internal IPs, hostnames, and credentials before external search.",
         }
     if query_type_value not in QUERY_LABELS:
         return {"tool": "search_device_info", "error": "invalid_query_type", "query_type": query_type_value}
